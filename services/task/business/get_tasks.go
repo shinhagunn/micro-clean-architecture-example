@@ -8,7 +8,7 @@ import (
 )
 
 func (b *business) GetTasks(ctx context.Context, f ...filters.Filter) ([]entity.Task, error) {
-	var tasks []entity.Task
+	tasks := make([]entity.Task, 0)
 
 	if err := b.repo.GetTasks(ctx, tasks, f...); err != nil {
 		return nil, err

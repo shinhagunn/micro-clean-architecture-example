@@ -20,6 +20,17 @@ type Ordering struct {
 
 func (p *Ordering) GetFilters() Filter {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Order(fmt.Sprintf("%s %s", p.OrderBy, p.Order))
+		orderBy := "created_at"
+		order := OrderAsc
+
+		if len(p.OrderBy) > 0 && p.OrderBy != orderBy {
+			orderBy = p.OrderBy
+		}
+
+		if len(p.Order) > 0 && p.Order != order {
+			order = p.Order
+		}
+
+		return db.Order(fmt.Sprintf("%s %s", orderBy, order))
 	}
 }
