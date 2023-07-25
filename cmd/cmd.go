@@ -1,6 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/shinhagunn/micro-clean-architecture-example/composer"
 	"github.com/shinhagunn/micro-clean-architecture-example/pkg/postgre"
@@ -35,5 +40,18 @@ func main() {
 
 	SetupRoutes(db, v2)
 
-	router.Run(":3000")
+	readTimeout := time.Duration(setting.Cfg.Server.ReadTimeout) * time.Second
+	writeTimeout := time.Duration(setting.Cfg.Server.WriteTimeout) * time.Second
+	endPoint := fmt.Sprintf(":%d", setting.Cfg.Server.Port)
+
+	server := &http.Server{
+		Addr:         endPoint,
+		Handler:      router,
+		ReadTimeout:  readTimeout,
+		WriteTimeout: writeTimeout,
+	}
+
+	log.Printf("[info] start http server listening %s", endPoint)
+
+	server.ListenAndServe()
 }
